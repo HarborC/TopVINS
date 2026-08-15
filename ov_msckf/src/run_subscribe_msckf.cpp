@@ -26,10 +26,10 @@
 #include "utils/dataset_reader.h"
 
 #if ROS_AVAILABLE == 1
-#include "ros/ROS1Visualizer.h"
+#include "visualizer/ROS1Visualizer.h"
 #include <ros/ros.h>
 #elif ROS_AVAILABLE == 2
-#include "ros/ROS2Visualizer.h"
+#include "visualizer/ROS2Visualizer.h"
 #include <rclcpp/rclcpp.hpp>
 #endif
 

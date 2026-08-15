@@ -29,7 +29,7 @@
 
 #include "core/VioManager.h"
 #include "core/VioManagerOptions.h"
-#include "ros/ROS1Visualizer.h"
+#include "visualizer/ROS1Visualizer.h"
 #include "utils/dataset_reader.h"
 
 using namespace ov_msckf;

@@ -89,7 +89,7 @@ list(APPEND LIBRARY_SOURCES
         src/update/UpdaterZeroVelocity.cpp
 )
 if (catkin_FOUND AND ENABLE_ROS)
-    list(APPEND LIBRARY_SOURCES src/ros/ROS1Visualizer.cpp src/ros/ROSVisualizerHelper.cpp)
+    list(APPEND LIBRARY_SOURCES src/visualizer/ROS1Visualizer.cpp src/visualizer/ROSVisualizerHelper.cpp)
 endif ()
 file(GLOB_RECURSE LIBRARY_HEADERS "src/*.h")
 add_library(ov_msckf_lib SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
@@ -157,4 +157,3 @@ install(TARGETS test_sim_repeat
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-

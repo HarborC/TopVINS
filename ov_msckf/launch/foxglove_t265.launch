@@ -1,0 +1,21 @@
+<launch>
+  <arg name="config_path" default="$(find ov_msckf)/../config/rs_t265/estimator_config.yaml" />
+  <arg name="foxglove_port" default="8765" />
+  <arg name="start_realsense" default="false" />
+
+  <group if="$(arg start_realsense)">
+    <include file="$(find realsense2_camera)/launch/rs_t265.launch">
+      <arg name="camera" value="t265" />
+      <arg name="enable_pose" value="false" />
+      <arg name="unite_imu_method" value="linear_interpolation" />
+    </include>
+  </group>
+
+  <node name="topvins_foxglove" pkg="ov_msckf" type="run_foxglove_msckf" output="screen" required="true">
+    <param name="config_path" value="$(arg config_path)" />
+    <param name="foxglove_port" value="$(arg foxglove_port)" />
+    <param name="topic_imu" value="/t265/imu" />
+    <param name="topic_camera0" value="/t265/fisheye1/image_raw" />
+    <param name="topic_camera1" value="/t265/fisheye2/image_raw" />
+  </node>
+</launch>

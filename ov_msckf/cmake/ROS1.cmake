@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.3)
 # Find ROS build system
 find_package(catkin QUIET COMPONENTS roscpp rosbag tf std_msgs geometry_msgs sensor_msgs nav_msgs visualization_msgs image_transport cv_bridge ov_core ov_init)
 
+option(ENABLE_FOXGLOVE_VISUALIZER "Build the Foxglove WebSocket visualizer" ON)
+if (ENABLE_FOXGLOVE_VISUALIZER)
+    set(FOXGLOVE_WARP_PREFIX "/home/cat/.local" CACHE PATH "foxglove-warp installation prefix")
+    find_package(foxglove-warp CONFIG REQUIRED HINTS "${FOXGLOVE_WARP_PREFIX}")
+endif ()
+
 # Describe ROS project
 if (catkin_FOUND AND ENABLE_ROS)
     add_definitions(-DROS_AVAILABLE=1)
@@ -90,6 +96,13 @@ list(APPEND LIBRARY_SOURCES
 )
 if (catkin_FOUND AND ENABLE_ROS)
     list(APPEND LIBRARY_SOURCES src/visualizer/ROS1Visualizer.cpp src/visualizer/ROSVisualizerHelper.cpp)
+    if (ENABLE_FOXGLOVE_VISUALIZER)
+        list(APPEND LIBRARY_SOURCES src/visualizer/FoxgloveVisualizer.cpp)
+        list(APPEND thirdparty_libraries foxglove-warp::foxglove_warp)
+        add_definitions(-DFOXGLOVE_AVAILABLE=1)
+    else ()
+        add_definitions(-DFOXGLOVE_AVAILABLE=0)
+    endif ()
 endif ()
 file(GLOB_RECURSE LIBRARY_HEADERS "src/*.h")
 add_library(ov_msckf_lib SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS})
@@ -127,6 +140,16 @@ if (catkin_FOUND AND ENABLE_ROS)
             LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
             RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     )
+
+    if (ENABLE_FOXGLOVE_VISUALIZER)
+        add_executable(run_foxglove_msckf src/run_foxglove_msckf.cpp)
+        target_link_libraries(run_foxglove_msckf ov_msckf_lib ${thirdparty_libraries})
+        install(TARGETS run_foxglove_msckf
+                ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+                LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+                RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+        )
+    endif ()
     
     install(DIRECTORY launch/
             DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
